@@ -15,12 +15,14 @@
     "better-sqlite3": "^11.8.1",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "ics": "^3.8.1",
     "multer": "^1.4.5-lts.1",
     "path": "^0.12.7",
     "pdf-parse": "^1.1.1",
-    "pdf-table-extractor": "^1.0.3"
+    "pdf-table-extractor": "^1.0.3",
+    "pg": "^8.13.3"
   },
   "devDependencies": {
     "jest": "^29.7.0",

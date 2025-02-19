@@ -1,5 +1,10 @@
 // db/shiftRepository.js
-const Database = require('better-sqlite3');
+require('dotenv').config();
+const { Pool } = require("pg");
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL, // Use Render's database URL
+    ssl: { rejectUnauthorized: false }, // Required for Render's hosted Postgres
+});
 
 class ShiftRepository {
   constructor() {
@@ -47,4 +52,4 @@ class ShiftRepository {
   }
 }
 
-module.exports = ShiftRepository;
+module.exports = new ShiftRepository;
