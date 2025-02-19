@@ -1,0 +1,172 @@
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>Rota Upload and Download ICS</title>
+  </head>
+  <body>
+    <h1>Rota Upload</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="rota" accept=".pdf">
+      <button type="submit">Upload Rota</button>
+    </form>
+
+    <h2>Get Shifts</h2>
+    <form action="/shifts" method="get">
+      <input type="text" name="name" placeholder="Enter your name">
+      <button type="submit">Get Shifts</button>
+    </form>
+
+    <h2>Download Calendar</h2>
+    <form id="downloadForm">
+      <input type="text" id="nameInput" name="name" placeholder="Enter your name">
+      <button type="submit">Download ICS</button>
+    </form>
+
+    <script>
+      document.getElementById('downloadForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('nameInput').value.trim();
+        if (!name) {
+          alert('Please enter your name.');
+          return;
+        }
+        // Navigate to the download route with the provided name.
+        window.location.href = `/download/${encodeURIComponent(name)}`;
+      });
+    </script>
+  </body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RotaCalendar</title>
+    <style>
+        body {
+            background-color: #F5E6DA;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        button {
+            background-color: #FF6B81;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #FF4A62;
+        }
+        .name {
+            width: 10;
+        }
+        .spinner {
+            display: none;
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #FF4A62;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .calendar-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            animation: bounce 1.5s infinite;
+            cursor: pointer;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        .rota-upload {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="calendar-icon bouncing" id="calendarIcon">
+            🗓️
+        </div>
+        <h1>STAFF PLANNER</h1>
+        <p>Generate your personalized schedule in seconds</p>
+        <input type="text" id="name" placeholder="Enter First Name Only">
+        <button onclick="downloadICS()">Add Shift to Calendar</button>
+        <div class="spinner" id="spinner"></div>
+
+        <!-- Rota Upload Form -->
+        <div class="rota-upload" id="rotaUpload">
+            <h1>Rota Upload</h1>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="rota" accept=".pdf">
+                <button type="submit">Upload Rota</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let clickCount = 0;
+
+        function downloadICS() {
+            const name = document.getElementById('name').value.trim();
+            if (!name) {
+                alert('Please enter your name');
+                return;
+            }
+            const spinner = document.getElementById('spinner');
+            spinner.style.display = 'block';
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                window.location.href = `/download/${encodeURIComponent(name)}`;
+            }, 3000);
+        }
+
+        document.getElementById('calendarIcon').addEventListener('click', () => {
+            clickCount++;
+            if (clickCount === 10) {
+                document.getElementById('rotaUpload').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
