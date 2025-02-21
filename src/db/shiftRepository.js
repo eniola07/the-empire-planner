@@ -8,9 +8,11 @@ const pool = new Pool({
 
 function convertDateFormat(dateStr) {
   // Input format: "dd/MM/yyyy"
-  // Output format: "yyyy-MM-dd"
+  // Output format: "yyyy-MM-dd", with padded month/day
   const [day, month, year] = dateStr.split('/');
-  return `${year}-${month}-${day}`;
+  const paddedDay = day.padStart(2, '0');
+  const paddedMonth = month.padStart(2, '0');
+  return `${year}-${paddedMonth}-${paddedDay}`;
 }
 
 class ShiftRepository {
@@ -26,7 +28,6 @@ class ShiftRepository {
     `);
   }
   
-
   async saveShifts(shifts) {
     const query = `
       INSERT INTO shifts (employee, start_datetime, end_datetime)
@@ -35,15 +36,15 @@ class ShiftRepository {
         end_datetime = EXCLUDED.end_datetime;
     `;
     for (const shift of shifts) {
-      const formattedDate = convertDateFormat(shift.date);
-      // Combine the formatted date with the time strings
-      const start = `${formattedDate} ${shift.startTime}`;
-      const end = `${formattedDate} ${shift.endTime}`;
+      const formattedDate = convertDateFormat(shift.date); // returns "yyyy-MM-dd"
+      // Use "T" to create ISO 8601 compliant timestamps:
+      const start = `${formattedDate}T${shift.startTime}:00`;
+      const end = `${formattedDate}T${shift.endTime}:00`;
       await pool.query(query, [shift.employee, start, end]);
     }
   }
   
-
+  
   async getShiftsByName(name) {
     const result = await pool.query(
       "SELECT * FROM shifts WHERE LOWER(employee) = LOWER($1) ORDER BY start_datetime",

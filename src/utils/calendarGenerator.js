@@ -7,9 +7,14 @@ function generateICS(shifts) {
   }
 
   const events = shifts.map(shift => {
-    // Convert start and end to Date objects (if not already)
+    // Convert start and end to Date objects
     const startDateObj = new Date(shift.start_datetime);
-    const endDateObj = new Date(shift.end_datetime);
+    let endDateObj = new Date(shift.end_datetime);
+    
+    // If the end time is less than or equal to the start time, it's likely an overnight shift.
+    if (endDateObj <= startDateObj) {
+      endDateObj.setDate(endDateObj.getDate() + 1);
+    }
     
     return {
       start: [
