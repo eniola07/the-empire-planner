@@ -7,56 +7,44 @@ function generateICS(shifts) {
   }
 
   const events = shifts.map(shift => {
-    // Extract start date and time
-    const [startDate, startTime] = shift.start_datetime.split(' ');
-    const [startDay, startMonth, startYear] = startDate.split('/').map(Number);
-    const [startHour, startMinute] = startTime.split(':').map(Number);
-
-    // Extract end date and time
-    const [endDate, endTime] = shift.end_datetime.split(' ');
-    const [endDay, endMonth, endYear] = endDate.split('/').map(Number);
-    const [endHour, endMinute] = endTime.split(':').map(Number);
-
-    // Handle overnight shifts (e.g., 22:00 - 06:00 should end the next day)
-    let adjustedEndDay = endDay;
-    let adjustedEndMonth = endMonth;
-    let adjustedEndYear = endYear;
-    if (endHour < startHour || (endHour === startHour && endMinute < startMinute)) {
-      // Move end time to the next day
-      let dateObj = new Date(startYear, startMonth - 1, startDay); // JS months are 0-based
-      dateObj.setDate(dateObj.getDate() + 1);
-      adjustedEndDay = dateObj.getDate();
-      adjustedEndMonth = dateObj.getMonth() + 1; // Convert back to 1-based month
-      adjustedEndYear = dateObj.getFullYear();
-    }
-
+    // Convert start and end to Date objects (if not already)
+    const startDateObj = new Date(shift.start_datetime);
+    const endDateObj = new Date(shift.end_datetime);
+    
     return {
-      start: [startYear, startMonth, startDay, startHour, startMinute],
-      end: [adjustedEndYear, adjustedEndMonth, adjustedEndDay, endHour, endMinute],
-      title: `Empire Shift for ${shift.employee}`,
-      description: `Work shift: ${startTime} - ${endTime}`,
+      start: [
+        startDateObj.getFullYear(),
+        startDateObj.getMonth() + 1,
+        startDateObj.getDate(),
+        startDateObj.getHours(),
+        startDateObj.getMinutes()
+      ],
+      end: [
+        endDateObj.getFullYear(),
+        endDateObj.getMonth() + 1,
+        endDateObj.getDate(),
+        endDateObj.getHours(),
+        endDateObj.getMinutes()
+      ],
+      title: `Shift for ${shift.employee}`,
+      description: `Work shift: ${startDateObj.toLocaleTimeString()} - ${endDateObj.toLocaleTimeString()}`,
       alarms: [
         {
-            action: 'audio',
-            description: 'Reminder',
-            trigger: { days:1, before: true }, // 1 day before
+          action: 'display',
+          trigger: { days: -1, before: true } // Alarm 1 day before
         },
         {
-            action: 'display',
-            trigger: { hours: -2, before: true }, // 2 hours before
+          action: 'display',
+          trigger: { hours: -2, before: true } // Alarm 2 hours before
         },
-    ],
+      ],
     };
   });
-
-  // Debugging: Check the generated events before creating the ICS file
-  console.log("Fixed ICS Events:", events);
 
   const { error, value } = ics.createEvents(events);
   if (error) {
     throw new Error(error);
   }
-  
   return value;
 }
 
