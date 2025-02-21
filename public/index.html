@@ -149,6 +149,10 @@
 
         function downloadICS() {
             const name = document.getElementById('name').value.trim();
+            if (/^\S+\s+\S+/.test(name)) {
+                alert('Please enter only your first name.');
+                return;
+            }
             if (!name) {
                 alert('Please enter your name');
                 return;

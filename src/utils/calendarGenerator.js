@@ -36,11 +36,11 @@ function generateICS(shifts) {
       alarms: [
         {
           action: 'display',
-          trigger: { days: -1, before: true } // Alarm 1 day before
+          trigger: { days: 1, before: true } // Alarm 1 day before
         },
         {
           action: 'display',
-          trigger: { hours: -2, before: true } // Alarm 2 hours before
+          trigger: { hours: 2, before: true } // Alarm 2 hours before
         },
       ],
     };
